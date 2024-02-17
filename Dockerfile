@@ -1,30 +1,29 @@
-# Use the official Maven image as the build environment
-FROM maven:3.8.4-openjdk-17-slim AS build
+# Use a multi-stage build for efficiency
+FROM maven:3.22-jdk-17 AS builder
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy the pom.xml and download the dependencies (to leverage Docker layer caching)
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Copy pom.xml and source code
+COPY pom.xml ./
+COPY src/main/java ./src/main/java
+COPY src/main/resources ./src/main/resources
 
-# Copy the source code to the container
-COPY src ./src
+# Install dependencies
+RUN mvn package
 
-# Build the application
-RUN mvn package -DskipTests
+# Switch to slim base image for runtime
+FROM openjdk:17-jdk-slim
 
-# Use the official OpenJDK image as the runtime environment
-FROM adoptopenjdk:17-jre-hotspot AS runtime
+# Copy JAR file from builder stage
+COPY --from=builder /app/target/*.jar app.jar
 
-# Set the working directory in the container
+
+# Set working directory
 WORKDIR /app
 
-# Copy the JAR file from the build stage to the runtime environment
-COPY --from=build /app/target/application.jar .
-
-# Expose the port your application listens on (change it to your application's port)
+# Expose port
 EXPOSE 8080
 
-# Define the command to run your application
-CMD ["java", "-jar", "your-application.jar"]
+# Run the application
+CMD ["java", "-jar", "app.jar"]
