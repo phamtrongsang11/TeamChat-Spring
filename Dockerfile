@@ -1,29 +1,21 @@
-# Use a multi-stage build for efficiency
-FROM maven:3.22-jdk-17 AS builder
+# Use a base image with Java JDK 17
+FROM adoptopenjdk:17-jdk-hotspot
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy pom.xml and source code
-COPY pom.xml ./
-COPY src/main/java ./src/main/java
-COPY src/main/resources ./src/main/resources
+# Copy the pom.xml and build the dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Install dependencies
-RUN mvn package
+# Copy the source code
+COPY src ./src
 
-# Switch to slim base image for runtime
-FROM openjdk:17-jdk-slim
+# Build the application
+RUN mvn package -DskipTests
 
-# Copy JAR file from builder stage
-COPY --from=builder /app/target/*.jar app.jar
-
-
-# Set working directory
-WORKDIR /app
-
-# Expose port
+# Expose the port on which the application will run
 EXPOSE 8080
 
 # Run the application
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "target/app.jar"]
