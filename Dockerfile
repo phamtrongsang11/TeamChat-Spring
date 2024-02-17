@@ -1,21 +1,12 @@
-# Use a base image with Java JDK 17
-FROM adoptopenjdk:17-jdk-hotspot
+FROM openjdk:17-jdk-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the pom.xml and build the dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Copy your application jar file
+COPY build/libs/*.jar app.jar
 
-# Copy the source code
-COPY src ./src
-
-# Build the application
-RUN mvn package -DskipTests
-
-# Expose the port on which the application will run
+# Expose the port your application runs on (adjust as needed)
 EXPOSE 8080
 
-# Run the application
-CMD ["java", "-jar", "target/app.jar"]
+# Start the application using java
+CMD ["java", "-jar", "app.jar"]
