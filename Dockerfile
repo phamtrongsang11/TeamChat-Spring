@@ -32,25 +32,25 @@
 # ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # Use a base image with JDK 17
-FROM  eclipse-temurin:17-jre
+FROM ubuntu:latest AS build
 
-# Set the working directory in the container
+RUN apt-get update
+RUN apt-get install openjdk-17-jdk -y
+
 WORKDIR /app
 
-# Copy the pom.xml file to the container
 COPY pom.xml .
 
-# Resolve Maven dependencies (this step is separated to cache dependencies)
 RUN mvn dependency:go-offline -B
 
-# Copy the source code to the container
 COPY src/ ./src/
 
-# Build the application
 RUN mvn package -DskipTests
 
-# Expose the port on which the application will run
+FROM openjdk:17-jdk-slim
+
 EXPOSE 8080
 
-# Define the command to run the application
-CMD ["java", "-jar", "target/your-application.jar"]
+COPY --from=build /build/libs/demo-1.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
