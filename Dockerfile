@@ -31,17 +31,26 @@
 # # Start the Spring application using the JAR file
 # ENTRYPOINT ["java", "-jar", "app.jar"]
 
-# Base image with Java 17
-FROM eclipse-temurin:17-jre
+# Use a base image with JDK 17
+FROM  eclipse-temurin:17-jre
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy Maven dependencies
-COPY ./target/*.jar app.jar
+# Copy the pom.xml file to the container
+COPY pom.xml .
 
-# Expose port for the Spring application (adjust if needed)
+# Resolve Maven dependencies (this step is separated to cache dependencies)
+RUN mvn dependency:go-offline -B
+
+# Copy the source code to the container
+COPY src/ ./src/
+
+# Build the application
+RUN mvn package -DskipTests
+
+# Expose the port on which the application will run
 EXPOSE 8080
 
-# Command to run the Spring application
-CMD ["java", "-jar", "app.jar"]
+# Define the command to run the application
+CMD ["java", "-jar", "target/your-application.jar"]
