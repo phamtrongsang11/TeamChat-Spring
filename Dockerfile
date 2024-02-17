@@ -14,8 +14,8 @@ RUN mvn clean install
 # Build the JAR file
 RUN mvn package
 
-# Switch to a slimmer runtime image
-FROM adoptopenjdk/openjdk17-slim
+# Switch to a hotspot runtime image
+FROM adoptopenjdk:17-jdk-hotspot
 
 # Copy the JAR file from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
