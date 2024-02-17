@@ -1,5 +1,5 @@
 # Use a multi-stage build for efficiency
-FROM maven:3.8-jdk-17 AS builder
+FROM maven:3.8.6-jdk-17 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -15,7 +15,7 @@ RUN mvn clean install
 RUN mvn package
 
 # Switch to a slimmer runtime image
-FROM openjdk:17-slim
+FROM adoptopenjdk/openjdk17-slim
 
 # Copy the JAR file from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
