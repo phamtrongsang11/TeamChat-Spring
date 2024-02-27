@@ -13,6 +13,7 @@ Team Chat is a Discord-based system that allows you to chat and hold meetings wi
 
 ## Geting start
 Frontend Repo: https://github.com/phamtrongsang11/TeamChat-React
+
 To run the app, simply do:
 - clone this repo to your local machine and run
 - clone frontend repo to your local machine and run
