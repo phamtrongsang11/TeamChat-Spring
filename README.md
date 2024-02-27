@@ -12,7 +12,7 @@ Team Chat is a Discord-based system that allows you to chat and hold meetings wi
 - Link server invite: https://teamchatx-react.netlify.app/invite/d1209332-c0f6-4f05-a2c5-b34e88cdf8b2 for easy join server and demo function
 
 ## Geting start
+Frontend Repo: https://github.com/phamtrongsang11/TeamChat-React
 To run the app, simply do:
 - clone this repo to your local machine and run
-- clone frontend source in https://github.com/phamtrongsang11/TeamChat-React to your local machine
-- npm install && npm run dev
+- clone frontend repo to your local machine and run
